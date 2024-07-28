@@ -461,6 +461,11 @@ int wmain(const int argc, const wchar_t *const argv[])
         return -1;
     }
 
+    /* Enable ANSI escape code processing of stdout */
+    const DWORD stdOutMode = 0;
+    GetConsoleMode(hConsole, &stdOutMode);
+    SetConsoleMode(hConsole, stdOutMode | ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
     /* Initialize read/write locks and condition variables */
     for (DWORD index = 0; index < BUFFERS; ++index)
     {
