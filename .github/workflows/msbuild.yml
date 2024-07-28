@@ -10,10 +10,11 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch:
 
 env:
   # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: .
+  SOLUTION_FILE_PATH: tee.sln
 
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
@@ -26,17 +27,49 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
-
-    - name: Restore NuGet packages
-      working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+    
+    - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x86
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: cmd make.cmd
+      run: |
+        # Clean up intermediate files
+        Remove-Item -Path ".\bin", ".\obj" -Recurse -ErrorAction SilentlyContinue
+
+        # Build executables for different architectures
+        MSBuild.exe /property:Platform=x86 /property:Configuration=$BUILD_CONFIGURATION /target:rebuild $SOLUTION_FILE
+        MSBuild.exe /property:Platform=x64 /property:Configuration=$BUILD_CONFIGURATION /target:rebuild $SOLUTION_FILE
+        MSBuild.exe /property:Platform=a64 /property:Configuration=$BUILD_CONFIGURATION /target:rebuild $SOLUTION_FILE
+
+        # Create output directory
+        New-Item -Path ".\out" -ItemType Directory -ErrorAction SilentlyContinue
+
+        # Copy executable files
+        Copy-Item -Path ".\bin\Win32\Release\tee.exe" -Destination ".\out\tee-x86.exe" -Force
+        Copy-Item -Path ".\bin\x64\Release\tee.exe" -Destination ".\out\tee-x64.exe" -Force
+        Copy-Item -Path ".\bin\ARM64\Release\tee.exe" -Destination ".\out\tee-a64.exe" -Force
+
+        # Set read-only attribute on executable files
+        Get-Item -Path ".\out\tee-*.exe" | ForEach-Object { $_.IsReadOnly = $true }
+
+        # Success message
+        Write-Host ""
+        Write-Host "Build completed."
+        Write-Host ""
+    
+    - name: Export the executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: tee-win32
+        path: out
