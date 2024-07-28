@@ -48,9 +48,9 @@ jobs:
         Remove-Item -Path ".\bin", ".\obj" -Recurse -ErrorAction SilentlyContinue
 
         # Build executables for different architectures
-        MSBuild.exe /property:Platform=x86 /property:Configuration=$BUILD_CONFIGURATION /target:rebuild $SOLUTION_FILE
-        MSBuild.exe /property:Platform=x64 /property:Configuration=$BUILD_CONFIGURATION /target:rebuild $SOLUTION_FILE
-        MSBuild.exe /property:Platform=a64 /property:Configuration=$BUILD_CONFIGURATION /target:rebuild $SOLUTION_FILE
+        MSBuild.exe /property:Platform=x86 /property:Configuration=$Env:BUILD_CONFIGURATION /target:rebuild $Env:SOLUTION_FILE
+        MSBuild.exe /property:Platform=x64 /property:Configuration=$Env:BUILD_CONFIGURATION /target:rebuild $Env:SOLUTION_FILE
+        MSBuild.exe /property:Platform=a64 /property:Configuration=$Env:BUILD_CONFIGURATION /target:rebuild $Env:SOLUTION_FILE
 
         # Create output directory
         New-Item -Path ".\out" -ItemType Directory -ErrorAction SilentlyContinue
