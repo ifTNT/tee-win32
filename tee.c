@@ -462,7 +462,7 @@ int wmain(const int argc, const wchar_t *const argv[])
     }
 
     /* Enable ANSI escape code processing of stdout */
-    const DWORD stdOutMode = 0;
+    DWORD stdOutMode = 0;
     GetConsoleMode(hStdOut, &stdOutMode);
     SetConsoleMode(hStdOut, stdOutMode | ENABLE_PROCESSED_OUTPUT | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 
