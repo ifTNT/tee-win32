@@ -18,6 +18,7 @@ Usage:
 Options:
   -a --append  Append to the existing file, instead of truncating
   -b --buffer  Enable write combining, i.e. buffer small chunks
+  -e --escape  Enable standard output ANSI escape code processing
   -f --flush   Flush output file after each write operation
   -i --ignore  Ignore the interrupt signal (SIGINT), e.g. CTRL+C
   -d --delay   Add a small delay after each read operation
@@ -50,7 +51,7 @@ Git mirrors for this project:
 
 ## License
 
-Copyright (c) 2023 “dEajL3kA” &lt;Cumpoing79@web.de&gt;  
+Copyright (c) 2024 “dEajL3kA” &lt;Cumpoing79@web.de&gt;  
 This work has been released under the MIT license. See [LICENSE.txt](LICENSE.txt) for details!
 
 ### Acknowledgement
